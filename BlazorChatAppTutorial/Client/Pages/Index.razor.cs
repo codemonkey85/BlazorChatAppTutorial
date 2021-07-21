@@ -2,7 +2,7 @@
 {
     public partial class Index
     {
-        private readonly AppState appState = new();
+        private readonly AppState appState = new(null);
         bool formSaved = false;
 
         string newRoomName;
