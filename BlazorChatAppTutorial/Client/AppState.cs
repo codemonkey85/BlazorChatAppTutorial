@@ -1,4 +1,5 @@
-﻿using BlazorChatAppTutorial.Shared.Models;
+﻿using BlazorChatAppTutorial.Client.Pages;
+using BlazorChatAppTutorial.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 using System;
@@ -18,7 +19,9 @@ namespace BlazorChatAppTutorial.Client
             NavigationManager = navigationManager;
         }
 
-        public async Task SetupHubConnection(string roomName, Action<ChatMessageModel> onAction)
+        public Room CurrentRoom { get; set; }
+
+        public async Task SetupHubConnection(string roomName)
         {
             if (RoomHubConnections.TryGetValue(roomName, out HubConnection hubConnection))
             {
@@ -31,7 +34,7 @@ namespace BlazorChatAppTutorial.Client
 
             hubConnection.On<ChatMessageModel>("ReceiveMessage", chatMessage =>
             {
-                onAction(chatMessage);
+                CurrentRoom.ReceiveMessage(chatMessage);
             });
 
             await hubConnection.StartAsync();

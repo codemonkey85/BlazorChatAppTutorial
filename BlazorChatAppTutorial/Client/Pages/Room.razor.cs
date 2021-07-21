@@ -1,5 +1,6 @@
 ﻿using BlazorChatAppTutorial.Shared.Models;
 using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -24,6 +25,7 @@ namespace BlazorChatAppTutorial.Client.Pages
         {
             newChatMessage.UserName = AppState.UserName;
             ChatMessages.Clear();
+            AppState.CurrentRoom = this;
 
             List<ChatMessageModel> previousChatMessages = (await HttpClient.GetFromJsonAsync<IEnumerable<ChatMessageModel>>($"chat/{RoomName}")).ToList();
             if (previousChatMessages?.Any() ?? false)
@@ -32,17 +34,19 @@ namespace BlazorChatAppTutorial.Client.Pages
                 StateHasChanged();
             }
 
-            await AppState.SetupHubConnection(RoomName, chatMessage =>
-            {
-                ChatMessages.Add(chatMessage);
-                StateHasChanged();
-            });
+            await AppState.SetupHubConnection(RoomName);
 
             if (!AppState.RoomNames.Contains(RoomName))
             {
                 AppState.RoomNames.Add(RoomName);
                 AppState.AppStateUpdated?.Invoke();
             }
+        }
+
+        public void ReceiveMessage(ChatMessageModel chatMessage)
+        {
+            ChatMessages.Add(chatMessage);
+            StateHasChanged();
         }
 
         private async Task Send()
