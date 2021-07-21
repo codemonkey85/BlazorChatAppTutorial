@@ -13,7 +13,10 @@ namespace BlazorChatAppTutorial.Client.Components
         private string MessageBody =>
             $"{ChatMessage.UserName} {ChatMessage.DateSent:T}: {ChatMessage.Message}";
 
-        private string MessageClass => "talk-bubble tri-right round right-in";
+        private string RightOrLeft => IsOutgoing ? "right" : "left";
+
+        private string MessageClass => $"talk-bubble tri-{RightOrLeft} round {RightOrLeft}-in";
+
         private string MessageBodyClass => "talktext";
     }
 }
