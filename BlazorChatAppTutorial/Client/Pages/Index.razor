@@ -5,6 +5,8 @@
 <div>
     <div class="form-div">
         <EditForm Model="appState" OnValidSubmit="OnValidFormSubmitUserName">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
             <div>
                 <label for="userNameInput">User Name: </label>
                 <InputText id="userNameInput" @bind-Value="appState.UserName" />
@@ -20,10 +22,12 @@
     </div>
 </div>
 <div class="form-div">
-    <EditForm Model="appState" OnValidSubmit="OnValidFormSubmitRoomNames">
+    <EditForm Model="@newRoom" OnValidSubmit="OnValidFormSubmitRoomNames">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
         <div>
             <label for="roomNameInput">Join Room: </label>
-            <InputText id="roomNameInput" @bind-Value="newRoomName" />
+            <InputText id="roomNameInput" @bind-Value="newRoom.RoomName" />
         </div>
         <div>
             <button type="submit" class="btn btn-primary">Submit</button>

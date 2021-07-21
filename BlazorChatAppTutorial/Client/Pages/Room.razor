@@ -2,6 +2,8 @@
     User: @AppState.UserName
 </label>
 <EditForm Model="newChatMessage" OnValidSubmit="Send">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
     <label for="messageInput">
         Message:
         <InputText id="messageInput" @bind-Value="newChatMessage.Message" size="50" />

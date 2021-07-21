@@ -1,11 +1,14 @@
-﻿namespace BlazorChatAppTutorial.Client.Pages
+﻿using BlazorChatAppTutorial.Shared.Models;
+
+namespace BlazorChatAppTutorial.Client.Pages
 {
     public partial class Index
     {
         private readonly AppState appState = new(null);
         bool formSaved = false;
 
-        string newRoomName;
+        private readonly ChatRoomModel newRoom = new();
+
         string roomJoinedMessage;
 
         protected override void OnInitialized()
@@ -27,16 +30,16 @@
 
         private void OnValidFormSubmitRoomNames()
         {
-            if (AppState.RoomNames.Contains(newRoomName))
+            if (AppState.RoomNames.Contains(newRoom.RoomName))
             {
-                roomJoinedMessage = $"Already in {newRoomName}.";
+                roomJoinedMessage = $"Already in {newRoom.RoomName}.";
             }
             else
             {
-                AppState.TryAddRoom(newRoomName);
+                AppState.TryAddRoom(newRoom.RoomName);
                 AppState.AppStateUpdated?.Invoke();
-                roomJoinedMessage = $"Joined {newRoomName}!";
-                newRoomName = string.Empty;
+                roomJoinedMessage = $"Joined {newRoom.RoomName}!";
+                newRoom.RoomName = string.Empty;
             }
         }
     }

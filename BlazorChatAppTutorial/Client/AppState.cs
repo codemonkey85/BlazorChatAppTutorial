@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace BlazorChatAppTutorial.Client
@@ -48,10 +49,8 @@ namespace BlazorChatAppTutorial.Client
             {
                 return;
             }
-            if (!Rooms.ContainsKey(CurrentRoom.RoomName))
-            {
-                Rooms.Add(CurrentRoom.RoomName, false);
-            }
+
+            TryAddRoom(CurrentRoom.RoomName);
 
             await HubConnection.SendAsync("JoinRoom", CurrentRoom.RoomName);
             Rooms[CurrentRoom.RoomName] = true;
@@ -75,6 +74,7 @@ namespace BlazorChatAppTutorial.Client
             return false;
         }
 
+        [Required]
         public string UserName { get; set; }
 
         private IDictionary<string, bool> Rooms { get; set; } = new Dictionary<string, bool>();
