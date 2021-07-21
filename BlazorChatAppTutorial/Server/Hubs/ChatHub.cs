@@ -1,8 +1,8 @@
-﻿using BlazorChatAppTutorial.Server.Data;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using BlazorChatAppTutorial.Server.Data;
 using BlazorChatAppTutorial.Shared.Models;
 using Microsoft.AspNetCore.SignalR;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace BlazorChatAppTutorial.Server.Hubs
 {
@@ -15,14 +15,19 @@ namespace BlazorChatAppTutorial.Server.Hubs
             PreviousChatArchive = previousChatArchive;
         }
 
-        public async Task SendMessage(string roomName, string userName, string message)
+        public async Task JoinRoom(string roomName)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, roomName);
+        }
+
+        public async Task SendMessage(string roomName, ChatModel chatModel)
         {
             if (!PreviousChatArchive.Chats.ContainsKey(roomName))
             {
                 PreviousChatArchive.Chats.Add(roomName, new List<ChatModel>());
             }
-            PreviousChatArchive.Chats[roomName].Add(new ChatModel { UserName = userName, Message = message });
-            await Clients.All.SendAsync("ReceiveMessage", userName, message);
+            PreviousChatArchive.Chats[roomName].Add(chatModel);
+            await Clients.Group(roomName).SendAsync("ReceiveMessage", chatModel);
         }
     }
 }

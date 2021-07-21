@@ -14,9 +14,9 @@
 
 <hr />
 
-<ul id="messagesList">
-    @foreach (string message in messages)
+<div id="messagesList">
+    @foreach (ChatModel chatMessage in ChatMessages)
     {
-        <li>@message</li>
+        <ChatMessageComponent ChatMessage="chatMessage" />
     }
-</ul>
+</div>
