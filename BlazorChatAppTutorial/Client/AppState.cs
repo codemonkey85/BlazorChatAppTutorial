@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BlazorChatAppTutorial.Client
 {
@@ -7,5 +8,7 @@ namespace BlazorChatAppTutorial.Client
         public string UserName { get; set; }
 
         public List<string> RoomNames { get; set; } = new List<string>();
+
+        public Action AppStateUpdated { get; set; }
     }
 }

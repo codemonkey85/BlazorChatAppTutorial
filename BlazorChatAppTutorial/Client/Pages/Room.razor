@@ -1,17 +1,13 @@
-﻿<div class="form-group">
-    <label>
-        User:
-        <input @bind="userInput" />
-    </label>
-</div>
-<div class="form-group">
-    <label>
+﻿<label>
+    User: @AppState.UserName
+</label>
+<EditForm Model="newChatMessage" OnValidSubmit="Send">
+    <label for="messageInput">
         Message:
-        <input @bind="messageInput" size="50" />
+        <InputText id="messageInput" @bind-Value="newChatMessage.Message" size="50" />
     </label>
-</div>
-<button @onclick="Send" disabled="@(!IsConnected)">Send</button>
-
+    <button type="submit" class="btn btn-primary" disabled="@(!IsConnected)">Send</button>
+</EditForm>
 <hr />
 
 <div id="messagesList">

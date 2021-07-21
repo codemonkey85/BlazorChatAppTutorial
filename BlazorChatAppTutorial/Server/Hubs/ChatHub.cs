@@ -1,6 +1,7 @@
 ﻿using BlazorChatAppTutorial.Server.Data;
 using BlazorChatAppTutorial.Shared.Models;
 using Microsoft.AspNetCore.SignalR;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -20,6 +21,7 @@ namespace BlazorChatAppTutorial.Server.Hubs
             {
                 PreviousChatArchive.Chats.Add(roomName, new List<ChatMessageModel>());
             }
+            chatMessage.DateSent = DateTime.Now;
             PreviousChatArchive.Chats[roomName].Add(chatMessage);
             await Clients.Group(roomName).SendAsync("ReceiveMessage", chatMessage);
         }

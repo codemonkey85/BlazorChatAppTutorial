@@ -1,11 +1,36 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+<h1>Blazor Chat App Tutorial</h1>
 
-Welcome to your new app.
-
-<EditForm Model="appState" OnValidSubmit="OnValidFormSubmit">
-    <label for="userNameInput">User Name: </label>
-    <InputText id="userNameInput" @bind-Value="appState.UserName" />
-    <button type="submit">Submit</button>
-</EditForm>
+<div>
+    <div class="form-div">
+        <EditForm Model="appState" OnValidSubmit="OnValidFormSubmitUserName">
+            <div>
+                <label for="userNameInput">User Name: </label>
+                <InputText id="userNameInput" @bind-Value="appState.UserName" />
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+            @if (formSaved)
+            {
+                <label>Saved!</label>
+            }
+        </EditForm>
+    </div>
+</div>
+<div class="form-div">
+    <EditForm Model="appState" OnValidSubmit="OnValidFormSubmitRoomNames">
+        <div>
+            <label for="roomNameInput">Join Room: </label>
+            <InputText id="roomNameInput" @bind-Value="newRoomName" />
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+        @if (!string.IsNullOrEmpty(roomJoinedMessage))
+        {
+            <label>@roomJoinedMessage</label>
+        }
+    </EditForm>
+</div>

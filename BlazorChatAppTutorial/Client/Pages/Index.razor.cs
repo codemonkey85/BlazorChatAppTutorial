@@ -3,6 +3,10 @@
     public partial class Index
     {
         private readonly AppState appState = new();
+        bool formSaved = false;
+
+        string newRoomName;
+        string roomJoinedMessage;
 
         protected override void OnInitialized()
         {
@@ -10,11 +14,26 @@
             appState.RoomNames.AddRange(AppState.RoomNames);
         }
 
-        private void OnValidFormSubmit()
+        private void OnValidFormSubmitUserName()
         {
             AppState.UserName = appState.UserName;
-            AppState.RoomNames.Clear();
-            AppState.RoomNames.AddRange(appState.RoomNames);
+            formSaved = true;
+            AppState.AppStateUpdated?.Invoke();
+        }
+
+        private void OnValidFormSubmitRoomNames()
+        {
+            if (AppState.RoomNames.Contains(newRoomName))
+            {
+                roomJoinedMessage = $"Already in {newRoomName}.";
+            }
+            else
+            {
+                AppState.RoomNames.Add(newRoomName);
+                roomJoinedMessage = $"Joined {newRoomName}!";
+                newRoomName = string.Empty;
+                AppState.AppStateUpdated?.Invoke();
+            }
         }
     }
 }

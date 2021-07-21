@@ -21,14 +21,13 @@ namespace BlazorChatAppTutorial.Client.Pages
 
         private HubConnection hubConnection;
         private readonly List<ChatMessageModel> ChatMessages = new();
-        private string userInput;
-        private string messageInput;
+        private readonly ChatMessageModel newChatMessage = new();
 
         protected override async Task OnParametersSetAsync()
         {
+            newChatMessage.UserName = AppState.UserName;
+
             ChatMessages.Clear();
-            userInput = string.Empty;
-            messageInput = string.Empty;
 
             if (hubConnection != null)
             {
@@ -54,13 +53,19 @@ namespace BlazorChatAppTutorial.Client.Pages
 
             await hubConnection.StartAsync();
             await hubConnection.SendAsync("JoinRoom", RoomName);
+
+            if (!AppState.RoomNames.Contains(RoomName))
+            {
+                AppState.RoomNames.Add(RoomName);
+                AppState.AppStateUpdated?.Invoke();
+            }
         }
 
-        private Task Send() => hubConnection?.SendAsync("SendMessage", RoomName, new ChatMessageModel
+        private async Task Send()
         {
-            UserName = userInput,
-            Message = messageInput
-        });
+            await hubConnection?.SendAsync("SendMessage", RoomName, newChatMessage);
+            newChatMessage.Message = string.Empty;
+        }
 
         public bool IsConnected => hubConnection?.State == HubConnectionState.Connected;
 
