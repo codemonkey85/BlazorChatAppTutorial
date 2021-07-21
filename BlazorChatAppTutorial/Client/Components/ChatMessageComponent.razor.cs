@@ -9,5 +9,11 @@ namespace BlazorChatAppTutorial.Client.Components
         public ChatMessageModel ChatMessage { get; set; }
 
         [Parameter] public bool IsOutgoing { get; set; }
+
+        private string MessageBody =>
+            $"{ChatMessage.UserName} {ChatMessage.DateSent:T}: {ChatMessage.Message}";
+
+        private string MessageClass => "talk-bubble tri-right round right-in";
+        private string MessageBodyClass => "talktext";
     }
 }

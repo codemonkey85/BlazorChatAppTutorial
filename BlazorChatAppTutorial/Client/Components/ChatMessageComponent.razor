@@ -1,4 +1,8 @@
 ﻿@if (ChatMessage != null)
 {
-    <div class="chat-message @(IsOutgoing ? "outgoing" : "incoming")">@($"{ChatMessage.UserName} {ChatMessage.DateSent:T}: {ChatMessage.Message}")</div>
+    <div class="@MessageClass">
+        <div class="@MessageBodyClass">
+            <p>@MessageBody</p>
+        </div>
+    </div>
 }
