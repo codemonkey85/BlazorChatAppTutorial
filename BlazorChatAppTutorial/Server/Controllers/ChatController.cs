@@ -22,9 +22,9 @@ namespace BlazorChatAppTutorial.Server.Controllers
         }
 
         [HttpGet("{roomName}")]
-        public IEnumerable<ChatModel> Get([FromRoute] string roomName)
+        public IEnumerable<ChatMessageModel> Get([FromRoute] string roomName)
         {
-            return PreviousChatArchive.Chats.TryGetValue(roomName, out IList<ChatModel> archive) ? archive : Array.Empty<ChatModel>();
+            return PreviousChatArchive.Chats.TryGetValue(roomName, out IList<ChatMessageModel> archive) ? archive : Array.Empty<ChatMessageModel>();
         }
     }
 }

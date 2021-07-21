@@ -1,12 +1,12 @@
-﻿using System;
+﻿using BlazorChatAppTutorial.Shared.Models;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR.Client;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using BlazorChatAppTutorial.Shared.Models;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.SignalR.Client;
 
 namespace BlazorChatAppTutorial.Client.Pages
 {
@@ -20,7 +20,7 @@ namespace BlazorChatAppTutorial.Client.Pages
         [Parameter] public string RoomName { get; set; }
 
         private HubConnection hubConnection;
-        private readonly List<ChatModel> ChatMessages = new();
+        private readonly List<ChatMessageModel> ChatMessages = new();
         private string userInput;
         private string messageInput;
 
@@ -35,7 +35,7 @@ namespace BlazorChatAppTutorial.Client.Pages
                 await hubConnection.DisposeAsync();
             }
 
-            List<ChatModel> previousChatMessages = (await HttpClient.GetFromJsonAsync<IEnumerable<ChatModel>>($"chat/{RoomName}")).ToList();
+            List<ChatMessageModel> previousChatMessages = (await HttpClient.GetFromJsonAsync<IEnumerable<ChatMessageModel>>($"chat/{RoomName}")).ToList();
             if (previousChatMessages?.Any() ?? false)
             {
                 ChatMessages.AddRange(previousChatMessages);
@@ -46,9 +46,9 @@ namespace BlazorChatAppTutorial.Client.Pages
                 .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
                 .Build();
 
-            hubConnection.On<ChatModel>("ReceiveMessage", chatModel =>
+            hubConnection.On<ChatMessageModel>("ReceiveMessage", chatMessage =>
             {
-                ChatMessages.Add(chatModel);
+                ChatMessages.Add(chatMessage);
                 StateHasChanged();
             });
 
@@ -56,7 +56,7 @@ namespace BlazorChatAppTutorial.Client.Pages
             await hubConnection.SendAsync("JoinRoom", RoomName);
         }
 
-        private Task Send() => hubConnection?.SendAsync("SendMessage", RoomName, new ChatModel
+        private Task Send() => hubConnection?.SendAsync("SendMessage", RoomName, new ChatMessageModel
         {
             UserName = userInput,
             Message = messageInput

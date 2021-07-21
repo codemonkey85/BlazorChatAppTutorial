@@ -1,6 +1,6 @@
 ﻿namespace BlazorChatAppTutorial.Shared.Models
 {
-    public class ChatModel
+    public class ChatMessageModel
     {
         public string UserName { get; set; }
 

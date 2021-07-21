@@ -6,6 +6,6 @@ namespace BlazorChatAppTutorial.Client.Components
     public partial class ChatMessageComponent
     {
         [Parameter]
-        public ChatModel ChatMessage { get; set; }
+        public ChatMessageModel ChatMessage { get; set; }
     }
 }
