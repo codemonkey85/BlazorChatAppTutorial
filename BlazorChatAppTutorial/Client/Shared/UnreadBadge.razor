@@ -1,3 +1,6 @@
-﻿<label class="unread-badge">
-    @UnreadCount.ToString()
-</label>
+﻿@if (UnreadCount > 0)
+{
+    <label class="unread-badge">
+        @UnreadCount.ToString()
+    </label>
+}

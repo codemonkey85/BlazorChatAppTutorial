@@ -20,7 +20,7 @@ namespace BlazorChatAppTutorial.Client.Pages
 
         protected override async Task OnParametersSetAsync()
         {
-            if (AppState.JoinedRooms.TryGetValue(RoomName, out var RoomModel))
+            if (AppState.JoinedRooms.TryGetValue(RoomName, out ChatRoomModel RoomModel))
             {
                 RoomModel.UnreadCount = 0;
             }

@@ -7,5 +7,7 @@ namespace BlazorChatAppTutorial.Client.Components
     {
         [Parameter]
         public ChatMessageModel ChatMessage { get; set; }
+
+        [Parameter] public bool IsOutgoing { get; set; }
     }
 }

@@ -1,1 +1,18 @@
-﻿
+﻿.chat-message {
+    border: solid 1px #278cce;
+    margin: 5px;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.outgoing {
+    position: relative;
+    left: -10px;
+    text-align: left;
+}
+
+.incoming {
+    position: relative;
+    right: -10px;
+    text-align: right;
+}
