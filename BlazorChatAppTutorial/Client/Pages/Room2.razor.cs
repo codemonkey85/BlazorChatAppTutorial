@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 
 namespace BlazorChatAppTutorial.Client.Pages
 {
-    [Route("/room1")]
-    public partial class Room1 : IDisposable
+    [Route("/room2")]
+    public partial class Room2 : IDisposable
     {
         [Inject] NavigationManager NavigationManager { get; set; }
 
@@ -24,7 +24,7 @@ namespace BlazorChatAppTutorial.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            List<ChatModel> previousChatMessages = (await HttpClient.GetFromJsonAsync<IEnumerable<ChatModel>>("chat/room1")).ToList();
+            IList<ChatModel> previousChatMessages = (await HttpClient.GetFromJsonAsync<ChatModel[]>("chat/room2")).ToList();
             foreach (ChatModel chatMessage in previousChatMessages)
             {
                 messages.Add($"{chatMessage.UserName}: {chatMessage.Message}");
@@ -44,7 +44,7 @@ namespace BlazorChatAppTutorial.Client.Pages
             await hubConnection.StartAsync();
         }
 
-        Task Send() => hubConnection?.SendAsync("SendMessage", "room1", userInput, messageInput);
+        Task Send() => hubConnection?.SendAsync("SendMessage", "room2", userInput, messageInput);
 
         public bool IsConnected => hubConnection?.State == HubConnectionState.Connected;
 

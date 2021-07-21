@@ -1,3 +1,4 @@
+using BlazorChatAppTutorial.Server.Data;
 using BlazorChatAppTutorial.Server.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,6 +34,8 @@ namespace BlazorChatAppTutorial.Server
                         "application/octet-stream"
                     });
             });
+
+            services.AddSingleton<PreviousChatArchive>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
