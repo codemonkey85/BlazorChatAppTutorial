@@ -11,7 +11,11 @@
         protected override void OnInitialized()
         {
             appState.UserName = AppState.UserName;
-            appState.RoomNames.AddRange(AppState.RoomNames);
+
+            foreach (string roomName in AppState.RoomNames)
+            {
+                appState.TryAddRoom(roomName);
+            }
         }
 
         private void OnValidFormSubmitUserName()
@@ -29,10 +33,10 @@
             }
             else
             {
-                AppState.RoomNames.Add(newRoomName);
+                AppState.TryAddRoom(newRoomName);
+                AppState.AppStateUpdated?.Invoke();
                 roomJoinedMessage = $"Joined {newRoomName}!";
                 newRoomName = string.Empty;
-                AppState.AppStateUpdated?.Invoke();
             }
         }
     }

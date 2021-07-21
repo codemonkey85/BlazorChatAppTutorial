@@ -23,7 +23,7 @@ namespace BlazorChatAppTutorial.Server.Hubs
             }
             chatMessage.DateSent = DateTime.Now;
             PreviousChatArchive.Chats[roomName].Add(chatMessage);
-            await Clients.Group(roomName).SendAsync("ReceiveMessage", chatMessage);
+            await Clients.Group(roomName).SendAsync("ReceiveMessage", roomName, chatMessage);
         }
     }
 }

@@ -10,56 +10,76 @@ namespace BlazorChatAppTutorial.Client
 {
     public class AppState
     {
-        private IDictionary<string, HubConnection> RoomHubConnections { get; set; } = new Dictionary<string, HubConnection>();
-
-        private NavigationManager NavigationManager { get; set; }
+        public HubConnection HubConnection { get; set; }
 
         public AppState(NavigationManager navigationManager)
         {
-            NavigationManager = navigationManager;
-        }
-
-        public Room CurrentRoom { get; set; }
-
-        public async Task SetupHubConnection(string roomName)
-        {
-            if (RoomHubConnections.TryGetValue(roomName, out HubConnection hubConnection))
+            if (navigationManager == null)
             {
                 return;
             }
 
-            hubConnection = new HubConnectionBuilder()
-                .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+            HubConnection = new HubConnectionBuilder()
+                .WithUrl(navigationManager.ToAbsoluteUri("/chathub"))
                 .Build();
 
-            hubConnection.On<ChatMessageModel>("ReceiveMessage", chatMessage =>
+            HubConnection.On<string, ChatMessageModel>("ReceiveMessage", (roomName, chatMessage) =>
             {
-                CurrentRoom.ReceiveMessage(chatMessage);
+                if (string.Equals(CurrentRoom.RoomName, roomName))
+                {
+                    CurrentRoom.ReceiveMessage(roomName, chatMessage);
+                }
+                else
+                {
+                    // notification
+                }
             });
 
-            await hubConnection.StartAsync();
-            await hubConnection.SendAsync("JoinRoom", roomName);
+            HubConnection.StartAsync();
+        }
 
-            RoomHubConnections.Add(roomName, hubConnection);
+        private Room CurrentRoom { get; set; }
 
-            return;
+        public async Task SetupHubConnection(Room room)
+        {
+            CurrentRoom = room;
+
+            if (Rooms.TryGetValue(CurrentRoom.RoomName, out bool isConfigured) && isConfigured)
+            {
+                return;
+            }
+            if (!Rooms.ContainsKey(CurrentRoom.RoomName))
+            {
+                Rooms.Add(CurrentRoom.RoomName, false);
+            }
+
+            await HubConnection.SendAsync("JoinRoom", CurrentRoom.RoomName);
+            Rooms[CurrentRoom.RoomName] = true;
+            AppStateUpdated?.Invoke();
         }
 
         public async Task SendAsync(string roomName, ChatMessageModel chatMessage)
         {
-            if (RoomHubConnections.TryGetValue(roomName, out HubConnection hubConnection))
-            {
-                await hubConnection.SendAsync("SendMessage", roomName, chatMessage);
-            }
+            await HubConnection.SendAsync("SendMessage", roomName, chatMessage);
         }
 
-        public bool IsRoomHubConnected(string roomName) =>
-            RoomHubConnections.TryGetValue(roomName, out HubConnection hubConnection) &&
-            hubConnection.State == HubConnectionState.Connected;
+        public bool IsHubConnected => HubConnection.State == HubConnectionState.Connected;
+
+        public bool TryAddRoom(string roomName)
+        {
+            if (!Rooms.ContainsKey(roomName))
+            {
+                Rooms.Add(roomName, false);
+                return true;
+            }
+            return false;
+        }
 
         public string UserName { get; set; }
 
-        public List<string> RoomNames { get; set; } = new List<string>();
+        private IDictionary<string, bool> Rooms { get; set; } = new Dictionary<string, bool>();
+
+        public ICollection<string> RoomNames => Rooms.Keys;
 
         public Action AppStateUpdated { get; set; }
     }
