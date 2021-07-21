@@ -9,10 +9,8 @@ using System.Threading.Tasks;
 namespace BlazorChatAppTutorial.Client.Pages
 {
     [Route("/room/{RoomName}")]
-    public partial class Room
+    public partial class RoomComponent
     {
-        [Inject] private NavigationManager NavigationManager { get; set; }
-
         [Inject] private HttpClient HttpClient { get; set; }
 
         [Parameter] public string RoomName { get; set; }
@@ -22,6 +20,15 @@ namespace BlazorChatAppTutorial.Client.Pages
 
         protected override async Task OnParametersSetAsync()
         {
+            if (AppState.JoinedRooms.TryGetValue(RoomName, out var RoomModel))
+            {
+                RoomModel.UnreadCount = 0;
+            }
+            else
+            {
+                RoomModel.RoomName = RoomName;
+            }
+
             newChatMessage.UserName = AppState.UserName;
             ChatMessages.Clear();
 
@@ -32,7 +39,7 @@ namespace BlazorChatAppTutorial.Client.Pages
                 StateHasChanged();
             }
 
-            await AppState.SetupHubConnection(this);
+            await AppState.SetupHubConnection(RoomModel, this);
         }
 
         public void ReceiveMessage(string roomName, ChatMessageModel chatMessage)

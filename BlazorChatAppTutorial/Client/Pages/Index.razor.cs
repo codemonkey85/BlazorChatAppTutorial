@@ -1,4 +1,7 @@
 ﻿using BlazorChatAppTutorial.Shared.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BlazorChatAppTutorial.Client.Pages
 {
@@ -14,11 +17,6 @@ namespace BlazorChatAppTutorial.Client.Pages
         protected override void OnInitialized()
         {
             appState.UserName = AppState.UserName;
-
-            foreach (string roomName in AppState.RoomNames)
-            {
-                appState.TryAddRoom(roomName);
-            }
         }
 
         private void OnValidFormSubmitUserName()
@@ -28,16 +26,22 @@ namespace BlazorChatAppTutorial.Client.Pages
             AppState.AppStateUpdated?.Invoke();
         }
 
-        private void OnValidFormSubmitRoomNames()
+        private async Task OnValidFormSubmitRoomNames()
         {
-            if (AppState.RoomNames.Contains(newRoom.RoomName))
+            newRoom.RoomName = newRoom.RoomName.Trim();
+            if (AppState.JoinedRooms.Select(chatRoom => chatRoom.Value.RoomName).Contains(newRoom.RoomName))
             {
                 roomJoinedMessage = $"Already in {newRoom.RoomName}.";
             }
             else
             {
-                AppState.TryAddRoom(newRoom.RoomName);
-                AppState.AppStateUpdated?.Invoke();
+                AppState.JoinedRooms.Add(newRoom.RoomName, new() { RoomName = newRoom.RoomName });
+
+                if (AppState.JoinedRooms.TryGetValue(newRoom.RoomName, out ChatRoomModel createdRoom))
+                {
+                    await AppState.SetupHubConnection(createdRoom);
+                }
+
                 roomJoinedMessage = $"Joined {newRoom.RoomName}!";
                 newRoom.RoomName = string.Empty;
             }

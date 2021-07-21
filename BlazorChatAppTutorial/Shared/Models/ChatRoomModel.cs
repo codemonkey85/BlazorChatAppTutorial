@@ -6,5 +6,7 @@ namespace BlazorChatAppTutorial.Shared.Models
     {
         [Required]
         public string RoomName { get; set; }
+
+        public int UnreadCount { get; set; }
     }
 }

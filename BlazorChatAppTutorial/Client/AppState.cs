@@ -26,34 +26,37 @@ namespace BlazorChatAppTutorial.Client
 
             HubConnection.On<string, ChatMessageModel>("ReceiveMessage", (roomName, chatMessage) =>
             {
-                if (string.Equals(CurrentRoom.RoomName, roomName))
+                if (CurrentRoom != null && string.Equals(CurrentRoom.RoomName, roomName))
                 {
                     CurrentRoom.ReceiveMessage(roomName, chatMessage);
                 }
                 else
                 {
-                    // notification
+                    if (JoinedRooms.TryGetValue(roomName, out ChatRoomModel joinedRoom))
+                    {
+                        joinedRoom.UnreadCount++;
+                        AppStateUpdated?.Invoke();
+                    }
                 }
             });
 
             HubConnection.StartAsync();
         }
 
-        private Room CurrentRoom { get; set; }
+        private RoomComponent CurrentRoom { get; set; }
 
-        public async Task SetupHubConnection(Room room)
+        public async Task SetupHubConnection(ChatRoomModel chatRoom, RoomComponent roomComponent = null)
         {
-            CurrentRoom = room;
-
-            if (Rooms.TryGetValue(CurrentRoom.RoomName, out bool isConfigured) && isConfigured)
+            if (roomComponent != null)
             {
-                return;
+                CurrentRoom = roomComponent;
             }
 
-            TryAddRoom(CurrentRoom.RoomName);
-
-            await HubConnection.SendAsync("JoinRoom", CurrentRoom.RoomName);
-            Rooms[CurrentRoom.RoomName] = true;
+            if (!JoinedRooms.ContainsKey(chatRoom.RoomName))
+            {
+                JoinedRooms.Add(chatRoom.RoomName, chatRoom);
+            }
+            await HubConnection.SendAsync("JoinRoom", chatRoom.RoomName);
             AppStateUpdated?.Invoke();
         }
 
@@ -64,22 +67,10 @@ namespace BlazorChatAppTutorial.Client
 
         public bool IsHubConnected => HubConnection.State == HubConnectionState.Connected;
 
-        public bool TryAddRoom(string roomName)
-        {
-            if (!Rooms.ContainsKey(roomName))
-            {
-                Rooms.Add(roomName, false);
-                return true;
-            }
-            return false;
-        }
-
         [Required]
         public string UserName { get; set; }
 
-        private IDictionary<string, bool> Rooms { get; set; } = new Dictionary<string, bool>();
-
-        public ICollection<string> RoomNames => Rooms.Keys;
+        public IDictionary<string, ChatRoomModel> JoinedRooms { get; } = new Dictionary<string, ChatRoomModel>();
 
         public Action AppStateUpdated { get; set; }
     }
