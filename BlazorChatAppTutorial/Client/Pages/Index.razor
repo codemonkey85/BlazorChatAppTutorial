@@ -4,4 +4,8 @@
 
 Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<EditForm Model="appState" OnValidSubmit="OnValidFormSubmit">
+    <label for="userNameInput">User Name: </label>
+    <InputText id="userNameInput" @bind-Value="appState.UserName" />
+    <button type="submit">Submit</button>
+</EditForm>
