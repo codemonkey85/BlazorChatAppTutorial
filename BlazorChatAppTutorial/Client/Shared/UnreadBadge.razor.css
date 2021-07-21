@@ -1,0 +1,15 @@
+﻿.unread-badge {
+    position: relative;
+    right: -10px;
+    top: -10px;
+    min-width: 5px;
+    min-height: 5px;
+    line-height: 5px;
+    padding: 5px;
+    color: #fff;
+    background-color: #bf1f1f;
+    font-size: 10px;
+    border-radius: 10px;
+    content: attr(data-badge);
+    border: solid 1px #c93a3a;
+}
